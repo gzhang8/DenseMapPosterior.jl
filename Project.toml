@@ -1,0 +1,4 @@
+name = "DenseMapPosterior"
+uuid = "ece92345-5790-480e-b997-1cad37fd4f86"
+authors = ["Guoxiang Zhang <email@email.com>"]
+version = "0.1.0"
