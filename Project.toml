@@ -1,0 +1,14 @@
+name = "DenseMapPosterior"
+uuid = "ece92345-5790-480e-b997-1cad37fd4f86"
+version = "0.1.0"
+
+[deps]
+
+ElasticFusion = "f0b4577b-1604-432d-8ed9-cdcb11ac7c03"
+SLAMData = "4727108a-1696-11e9-3839-8d115f7d1d5a"
+CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+Pangolin = "f90618ca-2674-4cd0-b380-84338b120a1c"
+CameraModel = "523612d1-fdf1-4d73-bc59-cd8571f64031"
+ModernGL = "66fc600b-dfda-50eb-8b99-91cfa97b1301"
+Surfels = "073c7976-b61c-11e9-2ac6-079b7b9ce1d3"
+
