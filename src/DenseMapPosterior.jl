@@ -1,5 +1,6 @@
 module DenseMapPosterior
 
-greet() = print("Hello World!")
+include("RGBD_Fusion.jl")
+include("DMP_RGBD.jl")
 
 end # module
