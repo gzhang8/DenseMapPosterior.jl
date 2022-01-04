@@ -3,11 +3,11 @@ using ModernGL
 
 # 6 calculate posterior
 # get likelihood, CPU version
-function depth_nll(depth_predict::Matrix, depth_real::Matrix)
+function depth_ll(depth_predict::Matrix, depth_real::Matrix)
 
     n_rows, n_cols = size(depth_predict)
 
-    nll = 0.0
+    ll = 0.0
     vaild_count = 0
     for c_idx = 1:n_cols
         for r_idx = 1:n_rows
@@ -16,19 +16,18 @@ function depth_nll(depth_predict::Matrix, depth_real::Matrix)
             if (predict_d_value != 0.0) && (real_d_value != 0.0)
                 diff = predict_d_value - real_d_value
                 # @show diff
-                nll = nll - diff^2
+                ll += diff^2
                 vaild_count += 1
             end
         end
     end
-    return nll / max(1, vaild_count)
+    return ll / max(1, vaild_count)
 end
 
 """
 for best performance, set tmp from a outside array
-This is ll not nll, the negative is in ll equation
 """
-function depth_nll_cuda(frame_buffer::Surfels.GLFrameBuffer,
+function depth_ll_cuda(frame_buffer::Surfels.GLFrameBuffer,
                         depth_real_f32_cu::CUDA.CuArray{Float32, 2};
                         tmp::CUDA.CuArray{Float32, 2}=similar(depth_real_f32_cu))
     w = frame_buffer.cam.width
@@ -77,9 +76,9 @@ function depth_nll_cuda(frame_buffer::Surfels.GLFrameBuffer,
     # out = collect(out_log_likelihood_cu)
     # imshow(Gray.(out))
 
-    cu_nll = - sum(out_log_likelihood_cu) #/ sum(out_log_likelihood_cu .!= 0.0)
+    cu_ll = sum(out_log_likelihood_cu) #/ sum(out_log_likelihood_cu .!= 0.0)
     cu_count = sum(out_log_likelihood_cu .!= 0.0)
-    return cu_nll / max(1, cu_count)
+    return cu_ll / max(1, cu_count)
 end
 
 function DMP_RGBD(
@@ -107,7 +106,7 @@ function DMP_RGBD(
     # load GlModel
     model::Surfels.GlSurfelsData = Surfels.read_surfels_file2gl(model_fpath)
 
-    nll = 0.0
+    ll = 0.0
     count = 0
     Surfels.glCheckError()
 
@@ -135,7 +134,7 @@ function DMP_RGBD(
         depth_real_f = convert(Matrix{Float32}, depth_real_uint) ./ 1000.0
         depth_real_f32_cu = CUDA.cu(depth_real_f)
 
-        nll += depth_nll_cuda(frame_buffer, depth_real_f32_cu, tmp=tmp)
+        ll += depth_ll_cuda(frame_buffer, depth_real_f32_cu, tmp=tmp)
 
         Surfels.glCheckError()
         count += 1
@@ -145,5 +144,5 @@ function DMP_RGBD(
     finalize(model)
     finalize(hidden_window)
     
-    return nll #/ Float64(count)
+    return ll #/ Float64(count)
 end
