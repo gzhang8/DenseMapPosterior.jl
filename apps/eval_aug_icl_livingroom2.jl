@@ -5,23 +5,17 @@ import SLAMData
 
 import DenseMapPosterior
 
-data_set_name = "AugICL_NUIM"
-
 data_seq_name_w_ext = "livingroom2.klg"
 data_seq_name = splitext(data_seq_name_w_ext)[1]
 
 
-
-base_folder = joinpath(homedir(), "data_2021Sep/ICL_NUIM")
-data_file = joinpath(base_folder, "klg", data_seq_name_w_ext)
-
-
-cam = CameraModel.Aug_ICL_NUIM_CamParam()
-rgbd_reader = SLAMData.KlgReader(data_file, cam=cam);
-
 fused_model_fpath = "/tmp/fused_model.ply"
 
 data_dir = joinpath(dirname(dirname(pathof(DenseMapPosterior))), "data", "livingroom2")
+
+data_file = joinpath(data_dir, data_seq_name_w_ext)
+cam = CameraModel.Aug_ICL_NUIM_CamParam()
+rgbd_reader = SLAMData.KlgReader(data_file, cam=cam);
 
 # traj_path = joinpath(data_dir, "m1.log")   # -14.06029388
 traj_path = joinpath(data_dir, "m2.log")   # -37.356114
